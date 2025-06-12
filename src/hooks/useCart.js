@@ -15,15 +15,26 @@ export const useCart = () => {
       cartItems.push({ product, quantity });
     }
 
-    setCartItems(cartItems);
+    setCartItems([...cartItems]);
     window.localStorage.setItem('cartItems', JSON.stringify(cartItems));
   };
+
   const removeCartItem = (productId) => {
     const newCartItems = cartItems.filter((cartItem) => cartItem.product.id !== productId);
     setCartItems(newCartItems);
     window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
   };
-  return { cartItems, addCartItem, removeCartItem };
+
+  const updateQuantity = (productId, quantity) => {
+    const matchingCartItem = cartItems.find((cartItem) => cartItem.product.id === productId);
+    if (!matchingCartItem) {
+      return;
+    }
+    matchingCartItem.quantity = quantity;
+    setCartItems([...cartItems]);
+    window.localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  };
+  return { cartItems, addCartItem, removeCartItem, updateQuantity };
 };
 
 export default useCart;
