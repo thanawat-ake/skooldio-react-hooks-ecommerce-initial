@@ -3,17 +3,18 @@ import { useState, useEffect } from 'react';
 const BASE_URL = 'https://us-central1-skooldio-react-hooks.cloudfunctions.net';
 
 export const useAPI = (path) => {
+  console.log('ABC');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
     fetch(BASE_URL + path)
       .then((resp) => resp.json())
       .then((data) => {
         setData(data);
-        setLoading(true);
+        setLoading(false);
       });
-  });
+  }, []);
   return { data, loading };
 };
 

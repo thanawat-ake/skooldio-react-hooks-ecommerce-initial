@@ -9,6 +9,8 @@ import { useParams } from 'react-router-dom';
 import { numberWithCommas } from '../utils';
 
 import useAPI from '../hooks/useAPI';
+import useCart from '../hooks/useCart';
+import { useState } from 'react';
 
 const Container = styled(BaseContainer)`
   padding-top: 78px;
@@ -62,6 +64,8 @@ const Description = styled.p`
  */
 export const ProductDetail = () => {
   const { productId } = useParams();
+  const [quantity, setQuantity] = useState('1');
+  const { addCartItem } = useCart();
   const { data, loading } = useAPI('/products/' + productId);
   if (loading || !data) return <div>Loading...</div>;
   return (
@@ -74,8 +78,14 @@ export const ProductDetail = () => {
         </Subtitle>
         <Title>{data.name}</Title>
         <Description>{data.description}</Description>
-        <Input style={{ marginBottom: '40px' }} type={'number'} label={'Quantity'} />
-        <Button>Add to Cart</Button>
+        <Input
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          style={{ marginBottom: '40px' }}
+          type={'number'}
+          label={'Quantity'}
+        />
+        <Button onClick={() => addCartItem(data, parseInt(quantity))}>Add to Cart</Button>
       </ProductInfo>
     </Container>
   );
