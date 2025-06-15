@@ -10,7 +10,7 @@ import { numberWithCommas } from '../utils';
 
 import useAPI from '../hooks/useAPI';
 import useCart from '../hooks/useCart';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 const Container = styled(BaseContainer)`
   padding-top: 78px;
@@ -67,6 +67,12 @@ export const ProductDetail = () => {
   const [quantity, setQuantity] = useState('1');
   const { addCartItem } = useCart();
   const { data, loading } = useAPI('/products/' + productId);
+  const handleQuantityChange = useCallback((e) => setQuantity(e.target.value), [setQuantity]);
+  const handleClick = useCallback(() => {
+    addCartItem(data, parseInt(quantity));
+    alert('เพิ่มสินค้าลงตะกร้าสำเร็จ');
+  }, [data, addCartItem, quantity]);
+
   if (loading || !data) return <div>Loading...</div>;
   return (
     <Container>
@@ -80,12 +86,14 @@ export const ProductDetail = () => {
         <Description>{data.description}</Description>
         <Input
           value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
+          onChange={handleQuantityChange}
           style={{ marginBottom: '40px' }}
           type={'number'}
           label={'Quantity'}
         />
-        <Button onClick={() => addCartItem(data, parseInt(quantity))}>Add to Cart</Button>
+        <Button disabled={!(quantity % 1 === 0 && quantity > 0)} onClick={handleClick}>
+          Add to Cart
+        </Button>
       </ProductInfo>
     </Container>
   );
